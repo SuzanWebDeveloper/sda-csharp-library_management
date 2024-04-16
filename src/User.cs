@@ -1,15 +1,11 @@
 namespace LibraryManagement;
 
-public class User
+public class User : LibraryItem
 {
-  public Guid Id { get; }
   public string? Name { set; get; }
-  public DateTime CreatedDate { set; get; }
-  public User(string name, DateTime createdDate = default)
+  public User(string name, DateTime createdDate = default) : base(name, createdDate)
   {
-    Id = Guid.NewGuid();
     Name = name;
-    CreatedDate = createdDate == default ? DateTime.Now : createdDate;
   }
 
   // override ToString method to display an object

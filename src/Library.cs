@@ -1,19 +1,34 @@
-using Microsoft.VisualBasic;
 
 namespace LibraryManagement;
 public class Library
 {
-  private List<Book> _books = new List<Book>();
-  private List<User> _users = new List<User>();
+  private List<Book> _books;
+  private List<User> _users;
+
+  public Library()
+  {
+    _books = new List<Book>();
+    _users = new List<User>();
+  }
 
   // - Get all books/users with pagination, sorted by created date.
-  public string GetAllBooksOrUsers(int id)
+  public void GetAllBooks()
   {
-    return "";
+    var sortedBooks = _books.OrderBy(book => book.CreatedDate).ToList();
+    int pageNumber = 1;
+    int limit = 3;
+    int itemsToSkip = (pageNumber - 1) * limit;
+    IEnumerable<Book> PagedBooks = _books.Skip(itemsToSkip).Take(limit);
+    Console.WriteLine($"Page: {pageNumber}");
+
+    foreach (var book in PagedBooks)
+    {
+      Console.WriteLine($"{book.Id}, {book.Title}");
+    }
   }
 
   // - Find books by title
-  public Book? FindBookByTitle(string bookTitle)
+  public List<Book>? FindBooksByTitle(string bookTitle)
   {
     try
     {
@@ -22,11 +37,10 @@ public class Library
 
       else
       {
-        Book? bookFound = _books.FirstOrDefault(book => string.Equals(book.Title, bookTitle, StringComparison.OrdinalIgnoreCase));
-
+        var bookFound = _books.Where(book => string.Equals(book.Title, bookTitle, StringComparison.OrdinalIgnoreCase)).ToList();
         if (bookFound != null)
         {
-          Console.WriteLine($"Book title \"{bookTitle}\" is found\n");
+          Console.WriteLine($"test-Book title \"{bookTitle}\" is found\n");
           return bookFound;
         }
         else
@@ -84,15 +98,31 @@ public class Library
       if (book.Title == null)
         throw new ArgumentException("invalid book");
 
-      //Do not allow to add items with same name to the library
-      bool isExist = _books.Any(book => string.Equals(book.Title, book.Title, StringComparison.OrdinalIgnoreCase));
-
-      if (isExist)
-        throw new ArgumentException("book exists, can't be added");
-
       Console.WriteLine($"\nBook to be added: {book}");
       _books.Add(book);
       Console.WriteLine($"added book {book.Title} successfully\n");
+    }
+    catch (ArgumentException e)
+    {
+      Console.WriteLine($"{e.Message}\n");
+    }
+  }
+  public void AddUser(User user)
+  {
+    // _users.Add(user);
+    // Console.WriteLine($"added user {user.Name} successfully\n");
+    try
+    {
+      if (user.Name == null)
+        throw new ArgumentException("invalid user");
+      //Do not allow to add existing user to the library
+      bool isExist = _users.Any(i => string.Equals(i.Name, user.Name, StringComparison.OrdinalIgnoreCase));
+      if (isExist)
+        throw new ArgumentException("user exists, can't be added");
+
+      Console.WriteLine($"Item to be added: {user}");
+      _users.Add(user);
+      Console.WriteLine($"added user {user.Name} successfully\n");
     }
     catch (ArgumentOutOfRangeException e)
     {
@@ -102,11 +132,6 @@ public class Library
     {
       Console.WriteLine($"{e.Message}\n");
     }
-  }
-  public void AddUser(User user)
-  {
-    _users.Add(user);
-    Console.WriteLine($"added user {user.Name} successfully\n");
   }
 
   //   public void AddBookOrUser<T>(T toBeAdded)

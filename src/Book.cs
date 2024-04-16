@@ -1,16 +1,12 @@
+
 namespace LibraryManagement;
-public class Book
+public class Book : LibraryItem
 {
-  public Guid Id { get; }
-  public string? Title { set; get; }
-  public DateTime CreatedDate { set; get; }
   public string? type;
 
-  public Book(string title, DateTime createdDate = default)
+  public Book(string title, DateTime createdDate = default) : base(title, createdDate)
   {
-    Id = Guid.NewGuid();
-    Title = title;
-    CreatedDate = createdDate == default ? DateTime.Now : createdDate;
+    // private List<Book> _books = new List<Book>();
   }
   // override ToString method to display an object
   public override string ToString()
