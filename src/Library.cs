@@ -18,8 +18,9 @@ public class Library
     int pageNumber = 1;
     int limit = 3;
     int itemsToSkip;
+
     int totalCount = _books.Count();
-    Console.WriteLine($"TotalCount: {totalCount}");
+    Console.WriteLine($"Books TotalCount: {totalCount}");
 
     int totalPages = (int)Math.Ceiling(totalCount / (double)limit);
     Console.WriteLine($"TotalPages: {totalPages}");
@@ -32,6 +33,31 @@ public class Library
       foreach (var book in PagedBooks)
       {
         Console.WriteLine($"{book.Id}, {book.Title}");
+      }
+      pageNumber++;
+    }
+  }
+  public void GetAllUsers()
+  {
+    var sortedUsers = _users.OrderBy(user => user.CreatedDate).ToList();
+    int pageNumber = 1;
+    int limit = 3;
+    int itemsToSkip;
+
+    int totalCount = _users.Count();
+    Console.WriteLine($"Users TotalCount: {totalCount}");
+
+    int totalPages = (int)Math.Ceiling(totalCount / (double)limit);
+    Console.WriteLine($"TotalPages: {totalPages}");
+
+    for (int i = 0; i < totalPages; i++)
+    {
+      Console.WriteLine($"Page: {pageNumber}");
+      itemsToSkip = (pageNumber - 1) * limit;
+      IEnumerable<User> PagedBooks = _users.Skip(itemsToSkip).Take(limit);
+      foreach (var user in PagedBooks)
+      {
+        Console.WriteLine($"{user.Id}, {user.Title}");
       }
       pageNumber++;
     }
@@ -50,7 +76,7 @@ public class Library
         var bookFound = _books.Where(book => string.Equals(book.Title, bookTitle, StringComparison.OrdinalIgnoreCase)).ToList();
         if (bookFound != null)
         {
-          Console.WriteLine($"test-Book title \"{bookTitle}\" is found\n");
+          Console.WriteLine($"Book title \"{bookTitle}\" is found\n");
           return bookFound;
         }
         else
@@ -170,8 +196,10 @@ public class Library
   //     }
   //   }
   //   }
+  //------------------------------
 
   // - Delete book/user by id
+
   public void DeleteBook(Guid id)
   {
     Book? bookFound = _books.FirstOrDefault(book => string.Equals(book.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
@@ -198,8 +226,4 @@ public class Library
       Console.WriteLine($"User Id \"{id}\" is not found\n");
     }
   }
-  // public void DeleteBookOrUser(int id)
-  // {
-
-  // }
 }

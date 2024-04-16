@@ -51,17 +51,22 @@ internal class Program
         library.AddUser(user1);
         library.AddUser(user2);
         library.AddUser(user3);
+        library.AddUser(user4);
+        library.AddUser(user5);
+        library.AddUser(user6);
 
-        Console.WriteLine($"user1 id: {user1}");
-        Console.WriteLine($"user2 id: {user2}");
-        Console.WriteLine($"{book1}");
+        // Console.WriteLine($"user1 id: {user1}");
+        // Console.WriteLine($"user2 id: {user2}");
+        // Console.WriteLine($"{book1}");
 
         library.FindBooksByTitle("The Great Gatsby");
         library.FindUserByName("Bob");
 
-        library.DeleteUser(user1.Id);
-        // library.DeleteBook(book1.Id);
-        var result3 = library.FindBooksByTitle("The Great Gatsby");
+         library.DeleteUser(user1.Id);
+         library.DeleteBook(book1.Id);
+
         library.GetAllBooks();
+        Console.WriteLine($"---------------------------------------");
+        library.GetAllUsers();
     }
 }
