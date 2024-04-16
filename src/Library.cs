@@ -17,13 +17,23 @@ public class Library
     var sortedBooks = _books.OrderBy(book => book.CreatedDate).ToList();
     int pageNumber = 1;
     int limit = 3;
-    int itemsToSkip = (pageNumber - 1) * limit;
-    IEnumerable<Book> PagedBooks = _books.Skip(itemsToSkip).Take(limit);
-    Console.WriteLine($"Page: {pageNumber}");
+    int itemsToSkip;
+    int totalCount = _books.Count();
+    Console.WriteLine($"TotalCount: {totalCount}");
 
-    foreach (var book in PagedBooks)
+    int totalPages = (int)Math.Ceiling(totalCount / (double)limit);
+    Console.WriteLine($"TotalPages: {totalPages}");
+
+    for (int i = 0; i < totalPages; i++)
     {
-      Console.WriteLine($"{book.Id}, {book.Title}");
+      Console.WriteLine($"Page: {pageNumber}");
+      itemsToSkip = (pageNumber - 1) * limit;
+      IEnumerable<Book> PagedBooks = _books.Skip(itemsToSkip).Take(limit);
+      foreach (var book in PagedBooks)
+      {
+        Console.WriteLine($"{book.Id}, {book.Title}");
+      }
+      pageNumber++;
     }
   }
 

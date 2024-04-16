@@ -38,7 +38,6 @@ internal class Program
 
         var library = new Library();
 
-        // library.AddBook(book1);
         library.AddBook(book2);
         library.AddBook(book3);
         library.AddBook(book4);
