@@ -1,14 +1,18 @@
 
 namespace LibraryManagement;
+using NotificationService;
+
 public class Library
 {
   private List<Book> _books;
   private List<User> _users;
+  private INotificationService _notificationService;
 
-  public Library()
+  public Library(INotificationService notificationService)
   {
     _books = new List<Book>();
     _users = new List<User>();
+    _notificationService = notificationService;
   }
 
   // - Get all books/users with pagination, sorted by created date.
@@ -37,6 +41,7 @@ public class Library
       pageNumber++;
     }
   }
+
   public void GetAllUsers()
   {
     var sortedUsers = _users.OrderBy(user => user.CreatedDate).ToList();
@@ -69,22 +74,25 @@ public class Library
     try
     {
       if (string.IsNullOrEmpty(bookTitle))
-        throw new ArgumentException("Book title is null or empty");
+        throw new ArgumentNullException("User name is null or empty\n");
 
+      var bookFound = _books.FindAll(book => string.Equals(book.Title, bookTitle, StringComparison.OrdinalIgnoreCase)).ToList();
+
+      if (bookFound.Count != 0 )
+      {
+        Console.WriteLine($"Book title \"{bookTitle}\" is found\n");
+        return bookFound;
+      }
       else
       {
-        var bookFound = _books.Where(book => string.Equals(book.Title, bookTitle, StringComparison.OrdinalIgnoreCase)).ToList();
-        if (bookFound != null)
-        {
-          Console.WriteLine($"Book title \"{bookTitle}\" is found\n");
-          return bookFound;
-        }
-        else
-        {
-          Console.WriteLine($"Book title \"{bookTitle}\" is not found\n");
-          return null;
-        }
+        Console.WriteLine($"Book title \"{bookTitle}\" is not found\n");
+        return null;
       }
+    }
+    catch (ArgumentNullException e)
+    {
+      Console.WriteLine(e.Message);
+      return null;
     }
     catch (System.Exception e)
     {
@@ -101,20 +109,16 @@ public class Library
       if (string.IsNullOrEmpty(userName))
         throw new ArgumentException("User name is null or empty\n");
 
+      User? userFound = _users.FirstOrDefault(user => string.Equals(user.Name, userName, StringComparison.OrdinalIgnoreCase));
+      if (userFound != null)
+      {
+        Console.WriteLine($"User name \"{userName}\" is found\n");
+        return userFound;
+      }
       else
       {
-        User? userFound = _users.FirstOrDefault(user => string.Equals(user.Name, userName, StringComparison.OrdinalIgnoreCase));
-
-        if (userFound != null)
-        {
-          Console.WriteLine($"User name \"{userName}\" is found\n");
-          return userFound;
-        }
-        else
-        {
-          Console.WriteLine($"User name \"{userName}\" is not found\n");
-          return null;
-        }
+        Console.WriteLine($"User name \"{userName}\" is not found\n");
+        return null;
       }
     }
     catch (System.Exception e)
@@ -122,8 +126,6 @@ public class Library
       Console.WriteLine(e.Message);
       return null;
     }
-
-
   }
 
   // - Add new book/user to the library
@@ -131,42 +133,49 @@ public class Library
   {
     try
     {
-      if (book.Title == null)
-        throw new ArgumentException("invalid book");
+      if (string.IsNullOrEmpty(book.Title))
+        throw new ArgumentNullException();
 
-      Console.WriteLine($"\nBook to be added: {book}");
+      Book? bookFound = _books.FirstOrDefault(bookInList => string.Equals(bookInList.Id.ToString(), book.Id.ToString(), StringComparison.OrdinalIgnoreCase));
+
+      if (bookFound != null)
+        throw new ArgumentException();
+
       _books.Add(book);
-      Console.WriteLine($"added book {book.Title} successfully\n");
+      _notificationService.SendNotificationOnSuccess($"book titled \"{book.Title}\"", "added to");
     }
-    catch (ArgumentException e)
+    catch (ArgumentNullException)
     {
-      Console.WriteLine($"{e.Message}\n");
+      Console.WriteLine($"book title is null or empty\n");
+    }
+    catch (ArgumentException)
+    {
+      _notificationService.SendNotificationOnFailure($"book titled \"{book.Title}\"", "exists");
     }
   }
+
   public void AddUser(User user)
   {
-    // _users.Add(user);
-    // Console.WriteLine($"added user {user.Name} successfully\n");
     try
     {
-      if (user.Name == null)
-        throw new ArgumentException("invalid user");
-      //Do not allow to add existing user to the library
-      bool isExist = _users.Any(i => string.Equals(i.Name, user.Name, StringComparison.OrdinalIgnoreCase));
-      if (isExist)
-        throw new ArgumentException("user exists, can't be added");
+      if (string.IsNullOrEmpty(user.Name))
+        throw new ArgumentNullException();
 
-      Console.WriteLine($"Item to be added: {user}");
+      bool isExist = _users.Any(i => string.Equals(i.Name, user.Name, StringComparison.OrdinalIgnoreCase));
+
+      if (isExist)
+        throw new ArgumentException();
+
       _users.Add(user);
-      Console.WriteLine($"added user {user.Name} successfully\n");
+      _notificationService.SendNotificationOnSuccess($"user name \"{user.Name}\"", "added to");
     }
-    catch (ArgumentOutOfRangeException e)
+    catch (ArgumentNullException)
     {
-      Console.WriteLine($"{e.Message}\n");
+      _notificationService.SendNotificationOnFailure($"user name", "null or empty");
     }
-    catch (ArgumentException e)
+    catch (ArgumentException)
     {
-      Console.WriteLine($"{e.Message}\n");
+      _notificationService.SendNotificationOnFailure($"user name \"{user.Name}\"", "exists");
     }
   }
 
@@ -206,24 +215,32 @@ public class Library
     if (bookFound != null)
     {
       _books.Remove(bookFound);
-      Console.WriteLine($"book is deleted successfully\n");
+      _notificationService.SendNotificationOnSuccess($"book titled \"{bookFound.Id}\"", "deleted from");
     }
     else
     {
       Console.WriteLine($"Book Id \"{id}\" is not found\n");
     }
   }
+
   public void DeleteUser(Guid id)
   {
     User? userFound = _users.FirstOrDefault(user => string.Equals(user.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
     if (userFound != null)
     {
       _users.Remove(userFound);
-      Console.WriteLine($"user {userFound.Name} is deleted successfully\n");
+      _notificationService.SendNotificationOnSuccess($"user id \"{userFound.Id}\"", "deleted from");
     }
     else
     {
-      Console.WriteLine($"User Id \"{id}\" is not found\n");
+      Console.WriteLine($"user Id \"{id}\" is not found\n");
     }
   }
+
+  // public Book? FindBookById(Guid id)
+  // {
+  //     Book? bookFound = _books.FirstOrDefault(book => string.Equals(book.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
+  //     return bookFound;
+  //   }
 }
+

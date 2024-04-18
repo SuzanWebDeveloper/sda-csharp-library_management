@@ -1,4 +1,5 @@
 ﻿namespace LibraryManagement;
+using NotificationService;
 
 internal class Program
 {
@@ -36,34 +37,45 @@ internal class Program
         var book19 = new Book("The Iliad");
         var book20 = new Book("Anna Karenina");
 
-        var library = new Library();
+        //var library = new Library();
+        // var emailService = new EmailNotificationService();
+        // var libraryWithEmail = new Library(emailService);
+        // var smsService = new SMSNotificationService();
+        // var library = new Library(smsService);
 
-        library.AddBook(book2);
-        library.AddBook(book3);
-        library.AddBook(book4);
-        library.AddBook(book5);
-        library.AddBook(book6);
-        library.AddBook(book7);
-        library.AddBook(book8);
-        library.AddBook(book9);
+        var emailService = new EmailNotificationService();
+        var library = new Library(emailService);
+
+        // library.AddBook(book2);
+        // library.AddBook(book2);
+
+        // library.AddBook(book3);
+        // library.AddBook(book4);
+        // library.AddBook(book5);
+        // library.AddBook(book6);
+        // library.AddBook(book7);
+        // library.AddBook(book8);
+        // library.AddBook(book9);
         library.AddBook(book1);
 
         library.AddUser(user1);
         library.AddUser(user2);
-        library.AddUser(user3);
-        library.AddUser(user4);
-        library.AddUser(user5);
-        library.AddUser(user6);
+        library.AddUser(user1);
+        // library.AddUser(user2);
+        // library.AddUser(user3);
+        // library.AddUser(user4);
+        // library.AddUser(user5);
+        // library.AddUser(user6);
 
         // Console.WriteLine($"user1 id: {user1}");
         // Console.WriteLine($"user2 id: {user2}");
         // Console.WriteLine($"{book1}");
 
         library.FindBooksByTitle("The Great Gatsby");
-        library.FindUserByName("Bob");
+        library.FindUserByName("Bob b");
 
-         library.DeleteUser(user1.Id);
-         library.DeleteBook(book1.Id);
+        // library.DeleteUser(user1.Id);
+        // library.DeleteBook(book1.Id);
 
         library.GetAllBooks();
         Console.WriteLine($"---------------------------------------");
