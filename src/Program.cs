@@ -37,9 +37,6 @@ internal class Program
         var book19 = new Book("The Iliad");
         var book20 = new Book("Anna Karenina");
 
-        //var library = new Library();
-        // var emailService = new EmailNotificationService();
-        // var libraryWithEmail = new Library(emailService);
         // var smsService = new SMSNotificationService();
         // var library = new Library(smsService);
 
