@@ -179,68 +179,28 @@ public class Library
     }
   }
 
-  //   public void AddBookOrUser<T>(T toBeAdded)
-  //   {
-  // if(toBeAdded is Book){
-  //   try{
-  //       if (toBeAdded.Title == null)
-  //         throw new ArgumentException("invalid book");
-  //       //Do not allow to add items with same name to the store
-  //       bool isExist = _books.Any(book => string.Equals(book.Title, toBeAdded.Title, StringComparison.OrdinalIgnoreCase));
-  //       if (isExist)
-  //         throw new ArgumentException("book exists, can't be added");
-
-  //       Console.WriteLine($"Book to be added: {toBeAdded}");
-  //       _books.Add(toBeAdded);
-  //       Console.WriteLine($"added {book.Title}\n");
-  //     }
-
-  //     catch (ArgumentOutOfRangeException e)
-  //     {
-  //       Console.WriteLine($"{e.Message}\n");
-  //     }
-  //     catch (ArgumentException e)
-  //     {
-  //       Console.WriteLine($"{e.Message}\n");
-  //     }
-  //   }
-  //   }
-  //------------------------------
-
   // - Delete book/user by id
-
   public void DeleteBook(Guid id)
   {
-    Book? bookFound = _books.FirstOrDefault(book => string.Equals(book.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
-    if (bookFound != null)
+   Book? bookFound = _books.FirstOrDefault(book => string.Equals(book.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
+    if (bookFound == null)
     {
-      _books.Remove(bookFound);
-      _notificationService.SendNotificationOnSuccess($"book titled \"{bookFound.Id}\"", "deleted from");
+      _notificationService.SendNotificationOnFailure($"book titled \"{bookFound?.Id}\"", "is not found");
+      return;
     }
-    else
-    {
-      Console.WriteLine($"Book Id \"{id}\" is not found\n");
-    }
+    _books.Remove(bookFound);
+    _notificationService.SendNotificationOnSuccess($"book titled \"{bookFound.Id}\"", "deleted from");
   }
 
   public void DeleteUser(Guid id)
   {
     User? userFound = _users.FirstOrDefault(user => string.Equals(user.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
-    if (userFound != null)
+    if (userFound == null)
     {
-      _users.Remove(userFound);
-      _notificationService.SendNotificationOnSuccess($"user id \"{userFound.Id}\"", "deleted from");
+      _notificationService.SendNotificationOnFailure($"user id \"{id}\"", "is not found");
+      return;
     }
-    else
-    {
-      Console.WriteLine($"user Id \"{id}\" is not found\n");
-    }
+    _users.Remove(userFound);
+    _notificationService.SendNotificationOnSuccess($"user id \"{id}\"", "deleted from");
   }
-
-  // public Book? FindBookById(Guid id)
-  // {
-  //     Book? bookFound = _books.FirstOrDefault(book => string.Equals(book.Id.ToString(), id.ToString(), StringComparison.OrdinalIgnoreCase));
-  //     return bookFound;
-  //   }
 }
-
