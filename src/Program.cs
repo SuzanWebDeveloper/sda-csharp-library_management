@@ -67,10 +67,6 @@ internal class Program
         // library.AddUser(user5);
         // library.AddUser(user6);
 
-        // Console.WriteLine($"user1 id: {user1}");
-        // Console.WriteLine($"user2 id: {user2}");
-        // Console.WriteLine($"{book1}");
-
         library.FindBooksByTitle("The Great Gatsby");
         library.FindUserByName("Bob b");
 
