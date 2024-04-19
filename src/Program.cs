@@ -43,6 +43,7 @@ internal class Program
         var libraryWithEmail = new Library(emailService);
         var libraryWithSMS = new Library(smsService);
 
+        Console.WriteLine($"\n----------------- Add Books/Users ----------------------");
         libraryWithEmail.AddBook(book2);
         libraryWithEmail.AddBook(book2);
         libraryWithEmail.AddBook(book1);
@@ -59,16 +60,23 @@ internal class Program
         libraryWithSMS.AddUser(user4);
         libraryWithSMS.AddUser(user5);
         libraryWithSMS.AddUser(user6);
-
+        Console.WriteLine($"----------------- Find Book/User ----------------------");
         libraryWithSMS.FindBooksByTitle("The Catcher in the Rye");
-        libraryWithSMS.FindUserByName("Bob b");
-
+        libraryWithSMS.FindUserByName("Julia");
+        libraryWithEmail.FindUserByName("Bob");
+        Console.WriteLine($"----------------- Delete Book/User ----------------------");
         libraryWithSMS.DeleteUser(user2.Id);
         libraryWithSMS.DeleteBook(book3.Id);
         libraryWithSMS.DeleteUser(user2.Id);
-
+        libraryWithEmail.DeleteUser(user2.Id);
+        Console.WriteLine($"----------------- List Books/Users ----------------------");
+        Console.WriteLine($"\n=========== libraryWithSMS ============");
         libraryWithSMS.GetAllBooks();
         Console.WriteLine($"---------------------------------------");
         libraryWithSMS.GetAllUsers();
+        Console.WriteLine($"\n========== libraryWithEmail ===========");
+        libraryWithEmail.GetAllBooks();
+        Console.WriteLine($"---------------------------------------");
+        libraryWithEmail.GetAllUsers();
     }
 }
